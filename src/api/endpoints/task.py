@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies.auth import get_current_user
 from api.dependencies.database import get_async_db
 from crud.task import task_crud
+from crud.task_collaborator import task_collaborator_crud
 from models.user import User
 from schemas.tasks import (
     TaskCreate,
@@ -70,13 +70,15 @@ async def read_task(
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_user),
 ):
-    if found_task := await task_crud.get_by_id_and_owner(
-        db=db, task_id=task_id, owner_id=current_user.id
-    ):
-        return found_task
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-    )
+    task = await task_crud.get_by_id_and_owner(db, task_id, current_user.id)
+    if not task:
+        task = await task_collaborator_crud.get_task_if_collaborator(
+            db, task_id, current_user.id
+        )
+    if not task:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    return task
 
 
 @router.patch("/{task_id}/status", response_model=TaskResponse)
@@ -86,16 +88,15 @@ async def update_task_status(
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_user),
 ):
-    task = await task_crud.update_status(
-        db=db,
-        task_id=task_id,
-        owner_id=current_user.id,
-        is_done=payload.is_done,
-    )
-    if not task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-        )
+    is_owner = await task_crud.get_by_id_and_owner(db, task_id, current_user.id)
+    if is_owner:
+        task = await task_crud.update_status(db, task_id, current_user.id, payload.is_done)
+    else:
+        has_access = await task_collaborator_crud.can_update(db, task_id, current_user.id)
+        if not has_access:
+            raise HTTPException(status_code=403, detail="No permission to update")
+        task = await task_crud.update_by_collaborator(db, task_id, payload.is_done)
+
     return task
 
 

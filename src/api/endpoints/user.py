@@ -68,7 +68,7 @@ async def refresh(
 async def logout(
     credentials: JwtAuthorizationCredentials = Security(access_security),
 ):
-    response = Response()
+    response = Response(status_code=status.HTTP_204_NO_CONTENT)
     response.delete_cookie(ACCESS_TOKEN_COOKIE_KEY)
     response.delete_cookie(REFRESH_TOKEN_COOKIE_KEY)
     return response

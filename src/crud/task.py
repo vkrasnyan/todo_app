@@ -1,5 +1,6 @@
 from typing import Optional, Sequence
 
+from fastapi import HTTPException, status
 from sqlalchemy import select, delete, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -39,7 +40,11 @@ class TaskCRUD(BaseAsyncCRUD[Task, TaskCreate]):
         return result.scalars().all()
 
     async def update_status(
-        self, db: AsyncSession, task_id: int, owner_id: int, is_done: bool
+        self,
+        db: AsyncSession,
+        task_id: int,
+        owner_id: int,
+        is_done: bool
     ) -> Optional[Task]:
         stmt = (
             update(self.model)
@@ -54,6 +59,26 @@ class TaskCRUD(BaseAsyncCRUD[Task, TaskCreate]):
         await db.commit()
 
         return await self.get_by_id_and_owner(db, task_id, owner_id)
+
+    async def update_by_collaborator(
+            self,
+            db: AsyncSession,
+            task_id: int,
+            is_done: bool
+    ) -> Optional[Task]:
+        stmt = (
+            update(Task)
+            .where(Task.id == task_id)
+            .values(is_done=is_done)
+            .execution_options(synchronize_session="fetch")
+        )
+        await db.execute(stmt)
+        await db.commit()
+
+        result = await db.execute(
+            select(Task).options(joinedload(Task.owner))
+            .where(Task.id == task_id))
+        return result.scalars().first()
 
     async def delete_by_id_and_owner(
         self, db: AsyncSession, task_id: int, owner_id: int

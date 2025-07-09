@@ -73,7 +73,6 @@ async def revoke_permissions(
         )
 
 
-
 @router.get("/check_read/", response_model=bool)
 async def check_read_permission(
     task_id: int,

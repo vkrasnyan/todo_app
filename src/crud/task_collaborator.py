@@ -2,9 +2,11 @@ from typing import Optional, List
 
 from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from models.task_collaborator import TaskCollaborator
 from schemas.task_collaborator import TaskCollaboratorCreate
+from models.task import Task
 
 from .async_crud import BaseAsyncCRUD
 
@@ -74,5 +76,32 @@ class TaskCollaboratorCRUD(BaseAsyncCRUD[TaskCollaborator, TaskCollaboratorCreat
         return bool(collab and collab.can_update)
 
 
-task_collaborator_crud = TaskCollaboratorCRUD(TaskCollaborator)
+    async def get_task_if_collaborator(
+            self, db: AsyncSession, task_id: int, user_id: int
+    ) -> Optional[Task]:
+        stmt = (
+            select(Task)
+            .join(TaskCollaborator, Task.id == TaskCollaborator.task_id)
+            .options(joinedload(Task.owner))
+            .where(
+                TaskCollaborator.task_id == task_id,
+                TaskCollaborator.user_id == user_id,
+                TaskCollaborator.can_read == True
+            )
+        )
+        result = await db.execute(stmt)
+        return result.scalars().first()
 
+    async def can_update(
+            self, db: AsyncSession, task_id: int, user_id: int
+    ) -> bool:
+        stmt = select(TaskCollaborator).where(
+            TaskCollaborator.task_id == task_id,
+            TaskCollaborator.user_id == user_id,
+            TaskCollaborator.can_update == True,
+        )
+        result = await db.execute(stmt)
+        return result.scalars().first() is not None
+
+
+task_collaborator_crud = TaskCollaboratorCRUD(TaskCollaborator)
