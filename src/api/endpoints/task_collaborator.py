@@ -17,14 +17,30 @@ async def assign_permissions(
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_user),
 ):
-    task = await task_crud.get_by_id_and_owner(db, data.task_id, current_user.id)
-    if not task:
-        raise HTTPException(status_code=403, detail="Not owner of the task")
+    if data.user_id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are already the owner of the task."
+        )
 
-    collab = await task_collaborator_crud.assign_rights(
-        db, data.task_id, data.user_id, data.can_read, data.can_update
+    task = await task_crud.get_by_id_and_owner(
+        db, task_id=data.task_id,
+        owner_id=current_user.id
     )
-    return collab
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not the owner of the task."
+        )
+
+    collaborator = await task_collaborator_crud.assign_rights(
+        db=db,
+        task_id=data.task_id,
+        user_id=data.user_id,
+        can_read=data.can_read,
+        can_update=data.can_update,
+    )
+    return collaborator
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
@@ -34,13 +50,28 @@ async def revoke_permissions(
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_user),
 ):
-    task = await task_crud.get_by_id_and_owner(db, task_id, current_user.id)
+    if user_id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are the owner and cannot revoke your own access."
+        )
+
+    task = await task_crud.get_by_id_and_owner(
+        db, task_id=task_id, owner_id=current_user.id
+    )
     if not task:
-        raise HTTPException(status_code=403, detail="Not owner of the task")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not the owner of the task."
+        )
 
     success = await task_collaborator_crud.remove_rights(db, task_id, user_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Permissions not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Permissions not found for the specified user."
+        )
+
 
 
 @router.get("/check_read/", response_model=bool)

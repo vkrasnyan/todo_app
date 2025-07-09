@@ -9,3 +9,7 @@ api_router.include_router(user_router, prefix="/user", tags=["User"])
 api_router.include_router(
     task_router, prefix="/task", tags=["Tasks"]
 )
+api_router.include_router(
+    task_collaborator_router,
+    prefix="/task-collaborator",
+)
