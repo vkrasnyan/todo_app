@@ -1,16 +1,18 @@
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
+
 from config.configs import db_settings
-from src.databases.database import Base
-from src.models.user import User
-from src.models.task import Task
+from databases.database import Base
+from models.user import User
+from models.task import Task
+from models.task_collaborator import TaskCollaborator
 
 
 config = context.config
@@ -19,7 +21,7 @@ fileConfig(config.config_file_name)
 
 _ = User.__table__
 _ = Task.__table__
-
+_ = TaskCollaborator.__table__
 
 target_metadata = Base.metadata
 
