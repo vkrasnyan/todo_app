@@ -23,8 +23,9 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 
-### 4. Создать файл .env в корне проекта
+### 4. Создать файл `.env` в корне проекта
 
+```dotenv
 POSTGRES_USER=your_username
 POSTGRES_PASSWORD=your_password
 POSTGRES_DB=todo
