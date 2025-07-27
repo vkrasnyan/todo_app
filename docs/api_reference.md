@@ -23,3 +23,26 @@ Content-Type: application/json
   "id": 1,
   "username": "newuser"
 }
+```
+
+### 🔹 POST /todo/api/user/login
+**Создание нового пользователя**
+
+Создаёт нового пользователя в системе.
+
+**Пример запроса**
+```http
+POST /todo/api/user/
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "password": "supersecurepassword",
+  "password_confirm": "supersecurepassword"
+}
+
+**Пример ответа**
+{
+  "id": 1,
+  "username": "newuser"
+}
