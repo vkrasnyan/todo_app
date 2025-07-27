@@ -92,11 +92,25 @@ docker-compose up --build
 
 ## 🛠️ Рекомендации по улучшению
 
-В рамках тестового задания реализована базовая функциональность с использованием целочисленных идентификаторов и булевых флагов. Однако при дальнейшем развитии проекта целесообразно внести следующие улучшения:
+На данный момент реализована базовая функциональность с использованием целочисленных идентификаторов и булевых флагов. Однако при дальнейшем развитии проекта целесообразно внести следующие улучшения:
 
     ✅ Использование UUID вместо Integer для идентификаторов задач и пользователей.
     ✅ Замена флагов can_read / can_update на Enum, описывающий уровень доступа.
-    В данном случае сознательно выбрала более простой вариант ради скорости времени выполнения тестового задания.
+    В данном случае сознательно выбрала более простой вариант ради скорости выполнения задания.
+
+## 📚 Дополнительные материалы
+
+    Описание архитектуры (в процессе)
+
+    Описание моделей и базы данных (в процессе)
+
+    Часто задаваемые вопросы (в процессе)
+
+## 👩‍💻 Автор
+
+**Виктория Краснянская**  
+[🌐 GitHub](https://github.com/vkrasnyan)
+[💼 LinkedIn](https://www.linkedin.com/in/vkrasnyan)
 
 ## 🇬🇧 English version
 
@@ -152,7 +166,7 @@ cd src
 uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 
 The API documentation will be available at: http://localhost:5000/todo/docs
-To run tests (SQLite is used, no PostgreSQL setup needed):
+To run tests (SQLite is used, no PostgreSQL setup needed): pytest src/tests
 
 ## 🐳 Docker Setup
 
@@ -165,7 +179,10 @@ This project was implemented as part of a coding assignment with simplified logi
     ✅ Use UUID instead of integer IDs for users and tasks.
     ✅ Replace can_read / can_update boolean flags with an Enum representing access levels.
 
+## 👩‍💻 Author
 
-
+**Viktoria Krasnyanskaya**  
+[🌐 GitHub](https://github.com/vkrasnyan)
+[💼 LinkedIn](https://www.linkedin.com/in/vkrasnyan)
 
 
