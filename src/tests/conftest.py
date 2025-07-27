@@ -1,4 +1,6 @@
 import asyncio
+from typing import Callable
+
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -11,6 +13,7 @@ from models.user import User
 from models.task import Task
 from models.task_collaborator import TaskCollaborator
 from utilities.security.password_hasher import get_password_hash
+from utilities.security.security import access_security
 
 TEST_SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -141,3 +144,18 @@ async def collaborator_fixture(
     await async_session.commit()
     await async_session.refresh(collaborator)
     return collaborator
+
+
+@pytest_asyncio.fixture
+async def get_auth_headers() -> Callable:
+    async def get_auth_header(user_fixture: User) -> str:
+        subject = {
+            "username": user_fixture.username,
+            "password": user_fixture.password
+        }
+        access_token = access_security.get_access_token(subject)
+        headers = {"Authorization": f"Bearer {access_token}"}
+        return headers
+
+    return get_auth_header
+
