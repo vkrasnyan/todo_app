@@ -1,12 +1,25 @@
-# API Reference
+# 📘 API Reference
 
-## Аутентификация
-`POST /auth/token` — получение JWT-токена
+## 👤 User
 
-Пример запроса:
+### 🔹 POST /todo/api/user/
+**Создание нового пользователя**
+
+Создаёт нового пользователя в системе.
+
+**Пример запроса**
 ```http
-POST /auth/token
-Content-Type: application/x-www-form-urlencoded
+POST /todo/api/user/
+Content-Type: application/json
 
-username=testuser&password=secret
+{
+  "username": "newuser",
+  "password": "supersecurepassword",
+  "password_confirm": "supersecurepassword"
+}
 
+**Пример ответа**
+{
+  "id": 1,
+  "username": "newuser"
+}
