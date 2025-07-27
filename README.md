@@ -155,6 +155,7 @@ JWT_REFRESH_SECRET_KEY=my_refresh_secret_key
 JWT_REFRESH_TOKEN_EXPIRES=10080
 ACCESS_TOKEN_COOKIE_KEY=access_token_cookie
 REFRESH_TOKEN_COOKIE_KEY=refresh_token_cookie
+```
 
 ### 5. Apply database migrations
 
