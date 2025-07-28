@@ -100,7 +100,11 @@ docker-compose up --build
 
 ## 📚 Дополнительные материалы
 
-    Описание архитектуры (в процессе)
+    📄 Документация API по ГОСТ 34 — см. файл [GOST34_TZ_ToDoAPI.docx](https://github.com/vkrasnyan/todo_app/blob/master/GOST34_TZ_ToDoAPI.docx)
+
+    [Описание архитектуры](https://github.com/vkrasnyan/todo_app/blob/master/docs/architecture.md)
+
+    [Описание API](https://github.com/vkrasnyan/todo_app/blob/master/docs/api_reference.md)
 
     Описание моделей и базы данных (в процессе)
 
