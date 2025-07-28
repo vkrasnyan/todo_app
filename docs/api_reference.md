@@ -338,21 +338,38 @@ Authorization: Bearer <access_token>
    - 403 Forbidden — текущий пользователь не является владельцем задачи;
    - 404 Not Found — задача не найдена.
 
-### 🔹 DELETE /todo/api/permissions/
-**Отозвать права доступа**
+### 🔹 GET /todo/api/permissions/check_read/
+**Проверить права на чтение задачи**
 
-Позволяет владельцу задачи удалить права доступа у указанного пользователя.
+Возвращает true или false в зависимости от того, есть ли у текущего пользователя доступ к чтению указанной задачи.
 
 **Query‑параметры**
 - `task_id` *(integer, required)* — ID задачи.
-- `user_id` *(integer, required)* — ID пользователя.
 
 **Пример запроса**
 ```http
-DELETE /todo/api/permissions/?task_id=1&user_id=42
+GET /todo/api/permissions/check_read/?task_id=1
 Authorization: Bearer <access_token>
 
 **Пример ответа**
-
-204 No Content
+true
 ```
+
+
+### 🔹 GET /todo/api/permissions/check_update/
+**Проверить права на обновление задачи**
+
+Возвращает true или false в зависимости от того, есть ли у текущего пользователя права на обновление указанной задачи.
+
+**Query‑параметры**
+- `task_id` *(integer, required)* — ID задачи.
+
+**Пример запроса**
+```http
+GET /todo/api/permissions/check_update/?task_id=1
+Authorization: Bearer <access_token>
+
+**Пример ответа**
+true
+```
+
