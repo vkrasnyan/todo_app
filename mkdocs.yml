@@ -1,0 +1,10 @@
+site_name: ToDoApp Docs
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - API: api_auto/api_auto.md
+  - База данных: db_auto/schema.md
+plugins:
+  - search
+  - awesome-pages
